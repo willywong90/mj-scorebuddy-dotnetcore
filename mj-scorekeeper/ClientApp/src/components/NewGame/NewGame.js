@@ -23,7 +23,6 @@ export class NewGame extends Component {
     }
 
     componentDidMount() {
-        this.getGameId();
     }
 
     handleInputChange(event) {
@@ -40,33 +39,25 @@ export class NewGame extends Component {
 
     submitForm(event) {
         event.preventDefault();
-        const data = {
-            gameId: this.state.gameId,
-            ...this.state.formState
-        };
 
-        fetch('/game/create', {
+        fetch('/api/game/new', {
             method: 'post',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(data),
+            body: JSON.stringify(this.state.formState),
         }).then((response) => {
-            if (response.status === 200) {
+            if (response.status === 201 && response.body) {
+                return response.json();
+            } else {
+                return null;
+            }
+        }).then((data) => {
+            if (data) {
                 this.setState({
+                    gameId: data.gameId,
                     isGameReady: true
                 });
             }
         });
-    }
-
-    getGameId() {
-        fetch('/game/new', {
-            method: 'get'
-        }).then((response) => response.text())
-            .then((data) => {
-                this.setState({
-                    gameId: data
-                });
-            });
     }
 
     render() {
@@ -76,7 +67,7 @@ export class NewGame extends Component {
             <>
                 {
                     this.state.isGameReady ?
-                        <Redirect to={`/game/${this.state.gameId.toUpperCase}`} />
+                        <Redirect to={`/game/${this.state.gameId.toUpperCase()}`} />
                         : null
                 }
 

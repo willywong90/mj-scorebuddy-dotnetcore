@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router';
 
-export class NewGame extends Component {
+export default class NewGame extends Component {
     static displayName = NewGame.name;
 
     constructor(props) {

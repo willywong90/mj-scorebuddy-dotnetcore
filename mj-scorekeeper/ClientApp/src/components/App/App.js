@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from '../Layout';
 import { Home } from '../Home';
-import { NewGame } from '../NewGame/NewGame';
+import { NewGame } from '../NewGame';
 import { Game } from '../Game';
 
 import './custom.css'

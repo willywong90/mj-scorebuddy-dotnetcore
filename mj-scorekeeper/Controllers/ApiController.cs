@@ -22,6 +22,15 @@ namespace mj_scorekeeper.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Route("game")]
+        public IActionResult getGames(int limit = 5)
+        {
+            Game[] games = dbContext.Games.OrderByDescending(s => s.Id).Take(limit).ToArray();
+
+            return Ok(games);
+        }
+
         [HttpPost]
         [Route("game/new")]
         public IActionResult newGame([FromBody] Game game)

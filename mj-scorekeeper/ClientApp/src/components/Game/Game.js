@@ -1,4 +1,5 @@
 import React, { useState, useReducer } from 'react';
+import './dropdown.css';
 
 const Game = () => {
     const numbers = [1, 2, 3];
@@ -14,7 +15,7 @@ const Game = () => {
         }
     );
 
-    const handleInputChange = (event) => {
+    const handleDropdownChange = (event) => {
         const name = event.target.name;
         const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
 
@@ -28,25 +29,25 @@ const Game = () => {
                 value={form.letter1}
                 options={list}
                 name={'winner'}
-                onChange={handleInputChange}
+                onChange={handleDropdownChange}
             />
             <Dropdown
                 label={'Loser'}
                 value={form.letter2}
                 options={list}
                 name={'loser'}
-                onChange={handleInputChange}
+                onChange={handleDropdownChange}
             />
             <Dropdown
                 label={'Fan'}
                 value={form.number}
                 options={numbers}
                 name={'fan'}
-                onChange={handleInputChange}
+                onChange={handleDropdownChange}
             />
             <div>
-                Checkbox
-				<input type="checkbox" name="isSelfDrawn" value={form.isSelfDrawn} onChange={handleInputChange} />
+                <div>Is self touch?</div>
+				<input type="checkbox" name="isSelfDrawn" value={form.isSelfDrawn} onChange={handleDropdownChange} />
             </div>
             <button type="button">add</button>
         </div>
@@ -55,9 +56,9 @@ const Game = () => {
 
 const Dropdown = ({ label, value, options, name, onChange }) => {
     return (
-        <div>
-            {label}
-            <select name={name} onChange={onChange} value={value}>
+        <div className="dropdown">
+            <div className="dropdown__label">{label}</div>
+            <select className="dropdown__select" name={name} onChange={onChange} value={value}>
                 <option value="" hidden></option>
                 {
                     options.map((item, index) => <option key={index}>{item}</option>)

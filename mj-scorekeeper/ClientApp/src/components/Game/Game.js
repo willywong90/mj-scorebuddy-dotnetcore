@@ -1,57 +1,83 @@
-import React, { useState, useReducer } from 'react';
+import React, { Component } from 'react';
 import './dropdown.css';
 
-const Game = () => {
-    const numbers = [1, 2, 3];
-    const list = ['A', 'B', 'C'];
+class Game extends Component {
+    constructor(props) {
+        super(props);
 
-    const [form, setForm] = useReducer(
-        (state, newState) => ({ ...state, ...newState }),
-        {
+        this.state = {
+            game: this.props.match.params.id,
+            playerList: [],
+            numbers: [3, 4, 5, 6, 7, 8, 9, 10],
             winner: '',
             loser: '',
             fan: '',
             isSelfDrawn: false
-        }
-    );
+        };
+    }
 
-    const handleDropdownChange = (event) => {
+    componentDidMount() {
+        fetch(`/api/game/${this.state.game}`, {
+            method: 'get'
+        }).then((response) => {
+            return response.json();
+        }).then((json) => {
+            this.setState({
+                playerList: [json.player1, json.player2, json.player3, json.player4]
+            })
+        });
+    }
+
+    getGameData = () => {
+
+    }
+
+    handleInputChange = (event) => {
         const name = event.target.name;
         const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
 
-        setForm({ [name]: value });
+        this.setState({
+            ...this.state,
+            [name]: value
+        });
     };
 
-    return (
-        <div className="section-block">
-            <Dropdown
-                label={'Winner'}
-                value={form.letter1}
-                options={list}
-                name={'winner'}
-                onChange={handleDropdownChange}
-            />
-            <Dropdown
-                label={'Loser'}
-                value={form.letter2}
-                options={list}
-                name={'loser'}
-                onChange={handleDropdownChange}
-            />
-            <Dropdown
-                label={'Fan'}
-                value={form.number}
-                options={numbers}
-                name={'fan'}
-                onChange={handleDropdownChange}
-            />
-            <div>
-                <div>Is self touch?</div>
-				<input type="checkbox" name="isSelfDrawn" value={form.isSelfDrawn} onChange={handleDropdownChange} />
+    handleSubmit = () => {
+
+    }
+
+    render() {
+        return (
+            <div className="section-block">
+                <Dropdown
+                    label={'Winner'}
+                    value={this.state.winner}
+                    options={this.state.playerList}
+                    name={'winner'}
+                    onChange={this.handleInputChange}
+                />
+                <Dropdown
+                    label={'Loser'}
+                    value={this.state.loser}
+                    options={this.state.playerList}
+                    name={'loser'}
+                    onChange={this.handleInputChange}
+                />
+                <Dropdown
+                    label={'Fan'}
+                    value={this.state.fan}
+                    options={this.state.numbers}
+                    name={'fan'}
+                    onChange={this.handleInputChange}
+                />
+                <div>
+                    <div>Is self touch?</div>
+                    <input type="checkbox" name="isSelfDrawn" value={this.state.isSelfDrawn} onChange={this.handleInputChange} />
+                </div>
+                <button type="button" onClick={this.handleSubmit}>add</button>
             </div>
-            <button type="button">add</button>
-        </div>
-    );
+        );
+    }
 };
 
 const Dropdown = ({ label, value, options, name, onChange }) => {

@@ -45,7 +45,7 @@ export default class NewGame extends Component {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(this.state.formState),
         }).then((response) => {
-            if (response.status === 201 && response.body) {
+            if (response.ok && response.body) {
                 return response.json();
             } else {
                 return null;

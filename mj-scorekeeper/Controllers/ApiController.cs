@@ -61,12 +61,24 @@ namespace mj_scorekeeper.Controllers
 
         [HttpPost]
         [Route("game/{gameId}/score/add")]
-        public IActionResult addScore([FromBody] Score hand)
+        public IActionResult addScore(string gameId, [FromBody] Score hand)
         {
-            hand.GameId = hand.GameId.ToUpper();
-            string gameId = hand.GameId;
+            if (hand.GameId == null)
+            {
+                hand.GameId = gameId;
+            }
 
-            Game game = dbContext.Games.FirstOrDefault(s => s.GameId == gameId);
+            hand.GameId = hand.GameId.ToUpper();
+
+            Game game = dbContext.Games.FirstOrDefault(s => s.GameId == hand.GameId);
+
+            PointConversion pointConversion = dbContext.PointConversion.FirstOrDefault(s => s.Fan == hand.Fan);
+            hand.Points = pointConversion.Points;
+
+            if (hand.IsSelfDrawn)
+            {
+                hand.Loser = null;
+            }
 
             if (game == null)
             {

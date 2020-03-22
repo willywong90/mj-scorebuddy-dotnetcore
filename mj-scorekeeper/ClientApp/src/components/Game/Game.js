@@ -8,11 +8,14 @@ class Game extends Component {
         this.state = {
             game: this.props.match.params.id,
             playerList: [],
-            numbers: [3, 4, 5, 6, 7, 8, 9, 10],
-            winner: '',
-            loser: '',
-            fan: '',
-            isSelfDrawn: false
+            loserList: [],
+            numbers: [3, 4, 5, 6, 7, 8],
+            formState: {
+                winner: '',
+                loser: '',
+                fan: 3,
+                isSelfDrawn: false
+            }
         };
     }
 
@@ -23,27 +26,73 @@ class Game extends Component {
             return response.json();
         }).then((json) => {
             this.setState({
-                playerList: [json.player1, json.player2, json.player3, json.player4]
+                playerList: [json.player1, json.player2, json.player3, json.player4],
+                loserList: [json.player1, json.player2, json.player3, json.player4]
             })
         });
     }
 
-    getGameData = () => {
-
-    }
-
     handleInputChange = (event) => {
         const name = event.target.name;
-        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        let value = event.target.value;
+
+        switch (name) {
+            case 'isSelfDrawn':
+                value = event.target.checked;
+                break;
+            case 'fan':
+                value = parseInt(value, 10);
+                break;
+        }
 
         this.setState({
-            ...this.state,
-            [name]: value
+            formState: {
+                ...this.state.formState,
+                [name]: value
+            }
         });
     };
 
-    handleSubmit = () => {
+    handleWinnerChange = (event) => {
+        const value = event.target.value;
+        const loserList = [];
 
+        for (let i = 0; i < this.state.playerList.length; i++) {
+            if (this.state.playerList[i] !== value) {
+                loserList.push(this.state.playerList[i]);
+            }
+        }
+
+        this.setState({
+            loserList: loserList
+        });
+
+        this.handleInputChange(event);
+    }
+
+    handleSubmit = () => {
+        fetch(`/api/game/${this.state.game}/score/add`, {
+            method: 'post',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(this.state.formState),
+        }).then((response) => {
+            if (response.ok && response.body) {
+                return response.json();
+            } else {
+                return null;
+            }
+        }).then((data) => {
+            if (data) {
+                this.setState({
+                    formState: {
+                        winner: '',
+                        loser: '',
+                        fan: 3,
+                        isSelfDrawn: false
+                    }
+                });
+            }
+        });
     }
 
     render() {
@@ -51,28 +100,28 @@ class Game extends Component {
             <div className="section-block">
                 <Dropdown
                     label={'Winner'}
-                    value={this.state.winner}
+                    value={this.state.formState.winner}
                     options={this.state.playerList}
                     name={'winner'}
-                    onChange={this.handleInputChange}
+                    onChange={this.handleWinnerChange}
                 />
                 <Dropdown
                     label={'Loser'}
-                    value={this.state.loser}
-                    options={this.state.playerList}
+                    value={this.state.formState.loser}
+                    options={this.state.loserList}
                     name={'loser'}
                     onChange={this.handleInputChange}
                 />
                 <Dropdown
                     label={'Fan'}
-                    value={this.state.fan}
+                    value={this.state.formState.fan}
                     options={this.state.numbers}
                     name={'fan'}
                     onChange={this.handleInputChange}
                 />
                 <div>
                     <div>Is self touch?</div>
-                    <input type="checkbox" name="isSelfDrawn" value={this.state.isSelfDrawn} onChange={this.handleInputChange} />
+                    <input type="checkbox" name="isSelfDrawn" checked={this.state.formState.isSelfDrawn} onChange={this.handleInputChange} />
                 </div>
                 <button type="button" onClick={this.handleSubmit}>add</button>
             </div>

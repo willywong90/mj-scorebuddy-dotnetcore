@@ -10,21 +10,21 @@ namespace mj_scorekeeper
 
         public string GameId { get; set; }
 
-        public string WinnerName { get; set; }
+        public string Winner { get; set; }
 
-        public string LoserName { get; set; }
+        public string Loser { get; set; }
 
         public int Fan { get; set; }
 
         public int Points { get; set; }
 
-        public bool IsSelfTouch { get; set; }
+        public bool IsSelfDrawn { get; set; }
 
         public Score()
         {
             Date = DateTime.Now;
             Fan = 3;
-            IsSelfTouch = false;
+            IsSelfDrawn = false;
         }
     }
 }

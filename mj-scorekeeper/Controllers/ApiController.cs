@@ -113,6 +113,7 @@ namespace mj_scorekeeper.Controllers
             if (hand.IsSelfDrawn)
             {
                 hand.Loser = null;
+                hand.Points = pointConversion.PointsSelfDrawn;
             }
 
             if (game == null)
